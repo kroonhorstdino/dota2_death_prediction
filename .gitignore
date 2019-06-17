@@ -171,4 +171,6 @@ cluster_scripts/parse_job_out/
 
 *.png
 
+#my additions (kroonhorstdino)
 parser/
+.vs/
