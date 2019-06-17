@@ -124,10 +124,10 @@ def parse_files(worker_id):
 			print("Corrupt match deleted: ",match_name)
 		sys.stdout.flush()
 
-		CSV_PAPTH = os.path.join(RESULTS_DIR,match_name + ".csv")
-		CSV_LIFE_PAPTH = os.path.join(RESULTS_DIR,match_name + "_life.csv")
-		subprocess.run(["rm",CSV_PAPTH])
-		subprocess.run(["rm",CSV_LIFE_PAPTH])
+		CSV_PAPTH = pathlib.Path(RESULTS_DIR,'match_name').with_suffix('.csv')
+		CSV_LIFE_PAPTH = pathlib.Path(RESULTS_DIR,('match_name' + '_life')).with_suffix('.csv')
+		subprocess.run(["rm",str(CSV_PAPTH)])
+		subprocess.run(["rm",str(CSV_LIFE_PAPTH)])
 		print("CSV deleted")
 		sys.stdout.flush()
 

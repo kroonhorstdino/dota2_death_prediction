@@ -68,3 +68,6 @@ predict_on_testset.py  Predict on the whole test set, and save predictions to fi
 test_score.ipynb  Analyses predictions
 analyze_results.ipynb  Analyse the results of the hyperparameter search
 
+Additional comments: (Christoph Hüter)
+heroes.json borrowed from https://github.com/kronusme/dota2-api/blob/master/data/heroes.json until I ask where the file is supposed to come from
+
