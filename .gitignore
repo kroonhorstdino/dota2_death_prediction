@@ -170,3 +170,5 @@ data_out/
 cluster_scripts/parse_job_out/
 
 *.png
+
+parser/
