@@ -411,9 +411,9 @@ def add_hero_role_features(data):
 
 
     #JSON_PATH = '/users/ak1774/scratch/esport/death_prediction/heros.json'
-    JSON_PATH = Path.cwd() / 'heros.json'
+    JSON_PATH = Path.cwd().parent / 'heros.json'
     #HERO_ROLE_CSV_PATH = "/users/ak1774/scratch/esport/death_prediction/Hero_Role_Data_Uptodate.csv"
-    HERO_ROLE_CSV_PATH = Path.cwd() / 'Hero_Role_Data_Uptodate.csv'
+    HERO_ROLE_CSV_PATH = Path.cwd().parent / 'Hero_Role_Data_Uptodate.csv'
 
     role_strings = ["Offlane","Mid","Support","Mage","RoamingSupport","SafelaneCarry"]
     

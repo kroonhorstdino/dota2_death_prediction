@@ -104,7 +104,7 @@ def parse_files(worker_id):
 		sys.stdout.flush()
 		#print(match_path)
 
-		subprocess.run(["java","-jar",str(JAR_PATH),str(match_path),str(RESULTS_DIR)])
+		#subprocess.run(["java","-jar",str(JAR_PATH),str(match_path),str(RESULTS_DIR)])
 		print("JAVA finished")
 		sys.stdout.flush()
 
