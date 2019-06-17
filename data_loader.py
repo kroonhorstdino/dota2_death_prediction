@@ -58,7 +58,7 @@ def run_cluster_randomize(data_type):
         H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
         OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
 
-    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID'])
+    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID']) #TODO
     NUM_WORKERS = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 
     now = time.time()
@@ -112,7 +112,7 @@ def run_cluster_normalize(data_type = None):
         H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
         OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
     
-    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID'])
+    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID']) #TODO
     NUM_WORKERS = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 
     

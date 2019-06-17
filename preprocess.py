@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import math
 import json
+from pathlib import Path
 
 # NOTE
 # It is important that everything is the same datatype in pandas, because otherwise getting values as an np array is expensive
@@ -407,8 +408,12 @@ def hero_id_to_roles(hero_id,hero_list,hero_roles_table):
 
 def add_hero_role_features(data):
     
-    JSON_PATH = '/users/ak1774/scratch/esport/death_prediction/heros.json'
-    HERO_ROLE_CSV_PATH = "/users/ak1774/scratch/esport/death_prediction/Hero_Role_Data_Uptodate.csv"
+
+
+    #JSON_PATH = '/users/ak1774/scratch/esport/death_prediction/heros.json'
+    JSON_PATH = Path.cwd() / 'heros.json'
+    #HERO_ROLE_CSV_PATH = "/users/ak1774/scratch/esport/death_prediction/Hero_Role_Data_Uptodate.csv"
+    HERO_ROLE_CSV_PATH = Path.cwd() / 'Hero_Role_Data_Uptodate.csv'
 
     role_strings = ["Offlane","Mid","Support","Mage","RoamingSupport","SafelaneCarry"]
     

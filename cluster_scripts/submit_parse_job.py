@@ -18,7 +18,7 @@ def generate_job_file():
     lines.append("#SBATCH --output=parse_job_%j.log")
     lines.append("#SBATCH --account=CS-DCLABS-2019")
     lines.append("#SBATCH --export=ALL")
-    lines.append("#SBATCH --array=0-499")    # Array range
+    lines.append("#SBATCH --array=0-499")    # Array range (500 jobs)
     #lines.append("#SBATCH --partition=himem ")
     lines.append("")
     lines.append("")
