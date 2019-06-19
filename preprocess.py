@@ -406,10 +406,9 @@ def hero_id_to_roles(hero_id,hero_list,hero_roles_table):
     return hero_roles_table.values[table_i,1:].astype(np.float32).flatten()
     
 
+#Not used as clarified by author
 def add_hero_role_features(data):
     
-
-
     #JSON_PATH = '/users/ak1774/scratch/esport/death_prediction/heros.json'
     JSON_PATH = Path.cwd().parent / 'heros.json'
     #HERO_ROLE_CSV_PATH = "/users/ak1774/scratch/esport/death_prediction/Hero_Role_Data_Uptodate.csv"
@@ -486,7 +485,7 @@ def read_and_preprocess_data(game_name,sample=True):
 
     data = add_game_name_hash(data,game_name)
 
-    data = add_hero_role_features(data)
+    #data = add_hero_role_features(data)
 
 
     # This is uses too much memory, this will be done for each batch during training

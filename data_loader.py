@@ -8,15 +8,18 @@ import sys
 import math
 import pickle
 from sklearn.utils import shuffle
+import pathlib
+from pathlib import Path
+from multiprocessing import Pool
 
 import preprocess
 
 
 
-def run_cluster_calculate_norm_stats():
+def run_cluster_calculate_norm_stats():    
 
-    H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-    H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
+    H5_PATH_PREFIX =  Path.cwd() / 'parsed_files' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+    H5_FILE_LIST = Path.cwd() / 'parsed_files' / 'all_h5_files.txt' #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
     
     now = time.time()
 

@@ -8,9 +8,9 @@ import pickle
 import time
 from multiprocessing import Pool
 import pathlib
-from pathlib import PurePath
+from pathlib import Path
 
-parent_dir = pathlib.Path.cwd().parent
+parent_dir = Path.cwd().parent
 sys.path.append(str(parent_dir))
 
 import preprocess
@@ -21,23 +21,19 @@ import data_loader
 
 print(sys.platform)
 
-
 # Before run:
 # generate dem file list with:
 # find . -name "*.dem" -type f > /users/ak1774/scratch/esport/death_prediction/all_dem_files.txt
 # then set MATCH_FILE_LOCATION_PREFIX
-#TODO Run inside script?
 
-MATCH_FILE_LOCATION_PREFIX = parent_dir.parent / 'source_demo_replaydownloader' / 'replays' #TODO set correct path (../replays)
+MATCH_FILE_LOCATION_PREFIX = parent_dir.parent / 'source_demo_replaydownloader' / 'replays'
 #MATCH_FILE_LOCATION_PREFIX = "/users/ak1774/scratch/cs-dclabs-2019/esport/gamefiles/semipro/"
 #MATCH_FILE_LOCATION_PREFIX = "/users/ak1774/scratch/cs-dclabs-2019/esport/gamefiles/pro/"
 
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_pro_dems.txt"
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_semipro_dems.txt"
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/some_dem_files.txt"
-MATCH_FILE_LIST = parent_dir.parent / 'source_demo_replaydownloader' / 'replays' / 'all_dem_files' #TODO
-
-print(MATCH_FILE_LIST)
+MATCH_FILE_LIST = parent_dir.parent / 'source_demo_replaydownloader' / 'replays' / 'all_dem_files.txt' #TODO
 
 JAR_PATH = parent_dir / 'parser' / 'target' / 'my_processor-0.0.one-jar.jar'
 
@@ -62,18 +58,21 @@ print("I am worker ",WORKER_ID," from ",NUM_WORKERS)
 """
 
 #execution continues at end of file
+def get_worker_count():
+	return os.cpu_count()
+	#return 1
 
 def parse_files(worker_id):
 	#FOR python multiprocessing
 	WORKER_ID = worker_id #Current Worker
-	NUM_WORKERS = os.cpu_count()
+	NUM_WORKERS = get_worker_count()
 
 	print("I am worker " + str(WORKER_ID))
 
 	ROOT_DIR = parent_dir
 	RESULTS_DIR = parent_dir / 'parsed_files'
 
-	with open(r'Z:\Bachelor\source_demo_replaydownloader\replays\all_dem_files.txt') as f: #MATCH_FILE_LIST
+	with open(str(MATCH_FILE_LIST)) as f: #MATCH_FILE_LIST
 		all_match_files = f.readlines()
 
 	all_match_files = [x.strip() for x in all_match_files] 
@@ -91,9 +90,7 @@ def parse_files(worker_id):
 		match_index = first_match_index_for_this_task + i
 		if match_index >= num_matches:
 			break # done
-
-    
-    
+	
 		match_path = all_match_files[match_index]
 		match_path = MATCH_FILE_LOCATION_PREFIX / match_path.replace('./','') #Append match name to folder path. Removes ./ before the match name in the all_dem_file
 
@@ -104,7 +101,7 @@ def parse_files(worker_id):
 		sys.stdout.flush()
 		#print(match_path)
 
-		#subprocess.run(["java","-jar",str(JAR_PATH),str(match_path),str(RESULTS_DIR)])
+		subprocess.run(["java","-jar",str(JAR_PATH),str(match_path),str(RESULTS_DIR)])
 		print("JAVA finished")
 		sys.stdout.flush()
 
@@ -123,22 +120,29 @@ def parse_files(worker_id):
 		else:
 			print("Corrupt match deleted: ",match_name)
 		sys.stdout.flush()
+		
+		#CSV_PATH = 'G:/Bachelor/dota2_death_prediction/parsed_files/4844929615_849875286.csv'
+		#CSV_LIFE_PATH = 'G:/Bachelor/dota2_death_prediction/parsed_files/4844929615_849875286_life.csv'
 
-		CSV_PAPTH = pathlib.Path(RESULTS_DIR,'match_name').with_suffix('.csv')
-		CSV_LIFE_PAPTH = pathlib.Path(RESULTS_DIR,('match_name' + '_life')).with_suffix('.csv')
-		subprocess.run(["rm",str(CSV_PAPTH)])
-		subprocess.run(["rm",str(CSV_LIFE_PAPTH)])
+		CSV_PATH = RESULTS_DIR / (match_name + '.csv')
+		CSV_LIFE_PATH = RESULTS_DIR / (match_name + '_life.csv')
+
+		#ubprocess.run(["rm",str(CSV_PATH)])
+		#subprocess.run(["rm",str(CSV_LIFE_PATH)])
+		os.remove(CSV_PATH)
+		os.remove(CSV_LIFE_PATH)
+
 		print("CSV deleted")
 		sys.stdout.flush()
 
 
 if __name__ == '__main__': #Split into processes here
-	#num_processes = os.cpu_count()
-	num_processes = 1
 
-	workers = [i for i in range(num_processes)]
+	workers = [i for i in range(get_worker_count())]
 	print("Number of Workers: " + str(len(workers)))
-
+	
 	print("Create multiple processes")
-	with Pool(num_processes) as p:
-		p.map(parse_files, workers)
+	with Pool(get_worker_count()) as p:
+		p.map(parse_files, workers)  # Work in parallel
+	
+	#parse_files(0) #For debugging
