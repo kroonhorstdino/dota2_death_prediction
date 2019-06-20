@@ -18,8 +18,8 @@ import preprocess
 
 def run_cluster_calculate_norm_stats():    
 
-    H5_PATH_PREFIX =  Path.cwd() / 'parsed_files' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-    H5_FILE_LIST = Path.cwd() / 'parsed_files' / 'all_h5_files.txt' #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
+    H5_PATH_PREFIX =  str(Path.cwd() / 'parsed_files') #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+    H5_FILE_LIST = str(Path.cwd() / 'parsed_files' / 'all_h5_files.txt') #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
     
     now = time.time()
 
@@ -93,12 +93,12 @@ def run_cluster_randomize(data_type):
     sys.stdout.flush()
 
 
-def run_cluster_normalize(data_type = None):
+def run_cluster_normalize(data_type = None,worker_id=0):
 
     if data_type == None:
-        H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-        H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
-        OUT_FOLDER = "data_out/"
+        H5_PATH_PREFIX = Path.cwd() / 'parsed_files' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+        H5_FILE_LIST = Path.cwd() / 'parsed_files' / 'all_h5_files.txt' #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
+        OUT_FOLDER = Path.cwd() / 'data_out'
 
     elif data_type == "train":
         H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
@@ -115,10 +115,9 @@ def run_cluster_normalize(data_type = None):
         H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
         OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
     
-    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID']) #TODO
-    NUM_WORKERS = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+    WORKER_ID = worker_id #int(os.environ['SLURM_ARRAY_TASK_ID'])
+    NUM_WORKERS = os.cpu_count() #int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 
-    
 
     now = time.time()
     norm_stats = None

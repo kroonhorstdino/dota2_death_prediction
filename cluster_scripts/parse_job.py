@@ -6,6 +6,7 @@ import math
 import subprocess
 import pickle
 import time
+import multiprocessing as mp
 from multiprocessing import Pool
 import pathlib
 from pathlib import Path
@@ -15,15 +16,14 @@ sys.path.append(str(parent_dir))
 
 import preprocess
 import data_loader
+import utility
 
 # command to delete corrupt files
 # grep -r --include="*.log" "PARSING_ERROR: " ./../ |  awk 'NF>1{print $NF}' | awk '$0=$0".h5"' | xargs rm
 
-print(sys.platform)
-
 # Before run:
 # generate dem file list with:
-# find . -name "*.dem" -type f > /users/ak1774/scratch/esport/death_prediction/all_dem_files.txt
+# find . -name "*.dem" -type f > all_dem_files.txt
 # then set MATCH_FILE_LOCATION_PREFIX
 
 MATCH_FILE_LOCATION_PREFIX = parent_dir.parent / 'source_demo_replaydownloader' / 'replays'
@@ -37,14 +37,14 @@ MATCH_FILE_LIST = parent_dir.parent / 'source_demo_replaydownloader' / 'replays'
 
 JAR_PATH = parent_dir / 'parser' / 'target' / 'my_processor-0.0.one-jar.jar'
 
-ALSO_NORMALIZE = False
+ALSO_NORMALIZE = True
 NORM_STATS_FILE = parent_dir / 'norm_stats.pickle'
 
 
 norm_stats = None
-if ALSO_NORMALIZE == True:
-	with open(NORM_STATS_FILE, 'rb') as f:
-		norm_stats = pickle.load(f)
+#if ALSO_NORMALIZE == True:
+#	with open(NORM_STATS_FILE, 'rb') as f:
+#		norm_stats = pickle.load(f)
 
 #FOR SLURM
 """
@@ -57,15 +57,11 @@ NUM_WORKERS = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 print("I am worker ",WORKER_ID," from ",NUM_WORKERS)
 """
 
-#execution continues at end of file
-def get_worker_count():
-	return os.cpu_count()
-	#return 1
-
 def parse_files(worker_id):
+
 	#FOR python multiprocessing
 	WORKER_ID = worker_id #Current Worker
-	NUM_WORKERS = get_worker_count()
+	NUM_WORKERS = utility.get_worker_count()
 
 	print("I am worker " + str(WORKER_ID))
 
@@ -79,13 +75,16 @@ def parse_files(worker_id):
 
 	num_matches = len(all_match_files)
 	match_per_worker = int(math.ceil(float(num_matches) / NUM_WORKERS))
-	print("Match per worker: ",match_per_worker)
+	print("Match per worker: ", match_per_worker)
 	sys.stdout.flush()
 
 
 	first_match_index_for_this_task = match_per_worker * WORKER_ID
 	print("My first match is: ",first_match_index_for_this_task, ". Number of matches is ",num_matches)
 	sys.stdout.flush()
+
+	time.sleep(1)
+
 	for i in range(match_per_worker):
 		match_index = first_match_index_for_this_task + i
 		if match_index >= num_matches:
@@ -138,11 +137,13 @@ def parse_files(worker_id):
 
 if __name__ == '__main__': #Split into processes here
 
-	workers = [i for i in range(get_worker_count())]
+	worker_count = utility.get_worker_count()
+
+	workers = [i for i in range(worker_count)]
 	print("Number of Workers: " + str(len(workers)))
 	
 	print("Create multiple processes")
-	with Pool(get_worker_count()) as p:
+	with Pool(worker_count) as p:
 		p.map(parse_files, workers)  # Work in parallel
 	
 	#parse_files(0) #For debugging
