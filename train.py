@@ -4,6 +4,7 @@ import glob
 import itertools
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -351,8 +352,8 @@ def train_pytorch():
     #validationDataFiles = glob.glob("/scratch/ak1774/data/validation/*.h5")
 
     # Viking
-    trainingDataFiles = glob.glob("/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/train/*.h5")
-    validationDataFiles = glob.glob("/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/*.h5")
+    trainingDataFiles = glob.glob(str(Path.cwd() / 'randomized_data' / 'train') + '/*.h5') #glob.glob("/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/train/*.h5")
+    validationDataFiles = glob.glob(str(Path.cwd() / 'randomized_data' / 'validation') + '/*.h5') #glob.glob("/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/*.h5")
 
     #trainingDataFiles = glob.glob("/scratch/staff/ak1774/shared_folder/data/train/*.h5")
     #validationDataFiles = glob.glob("/scratch/staff/ak1774/shared_folder/data/validation/*.h5")
