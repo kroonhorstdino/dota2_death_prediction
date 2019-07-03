@@ -1,5 +1,3 @@
-
-
 import os
 import numpy as np
 import pandas as pd
@@ -18,7 +16,7 @@ import preprocess
 
 def run_cluster_calculate_norm_stats():    
 
-    H5_PATH_PREFIX =  str(Path.cwd() / 'parsed_files') #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+    H5_PATH_PREFIX =  str(Path.cwd() / 'parsed_files') + '/' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
     H5_FILE_LIST = str(Path.cwd() / 'parsed_files' / 'all_h5_files.txt') #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
     
     now = time.time()
@@ -44,25 +42,27 @@ def run_cluster_calculate_norm_stats():
     sys.stdout.flush()
 
 
-def run_cluster_randomize(data_type):
+def run_cluster_randomize(data_type,worker_id,num_workers):
+
+    H5_PATH_PREFIX = str(Path.cwd() / 'parsed_files') + '/'
 
     if data_type == "train":
-        H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-        H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/training_files.txt"
-        OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/train/"
+        #H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parsed_files/"
+        H5_FILE_LIST = str(Path.cwd() / 'training_files.txt') #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/training_files.txt"
+        OUT_FOLDER = str(Path.cwd() / 'randomized_data' / 'train') + '/'
 
     elif data_type == "test":
-        H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-        H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/test_files.txt"
-        OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/test/"
+        #H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+        H5_FILE_LIST = str(Path.cwd() / 'test_files.txt') #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/test_files.txt"
+        OUT_FOLDER = str(Path.cwd() / 'randomized_data' / 'test') + '/' #"/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/test/"
 
     elif data_type == "validation":
-        H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-        H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
-        OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
+        #H5_PATH_PREFIX =  "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+        H5_FILE_LIST = str(Path.cwd() / 'validation_files.txt') #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
+        OUT_FOLDER = str(Path.cwd() / 'randomized_data' / 'validation') + '/' #"/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
 
-    WORKER_ID = int(os.environ['SLURM_ARRAY_TASK_ID']) #TODO
-    NUM_WORKERS = int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+    WORKER_ID = worker_id #int(os.environ['SLURM_ARRAY_TASK_ID']) #TODO
+    NUM_WORKERS = num_workers #int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 
     now = time.time()
     h5_files = get_h5_file_list(H5_PATH_PREFIX,H5_FILE_LIST)
@@ -70,7 +70,6 @@ def run_cluster_randomize(data_type):
 
     # shuffle the data
     data = shuffle(data)
-
 
     now = time.time()
     DATA_CHUNK_SIZE = 4000
@@ -93,12 +92,12 @@ def run_cluster_randomize(data_type):
     sys.stdout.flush()
 
 
-def run_cluster_normalize(data_type = None,worker_id=0):
+def run_cluster_normalize(data_type = None,worker_id=0,num_workers=None):
 
     if data_type == None:
-        H5_PATH_PREFIX = Path.cwd() / 'parsed_files' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
-        H5_FILE_LIST = Path.cwd() / 'parsed_files' / 'all_h5_files.txt' #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
-        OUT_FOLDER = Path.cwd() / 'data_out'
+        H5_PATH_PREFIX = str(Path.cwd() / 'parsed_files') + '/' #"/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
+        H5_FILE_LIST = str(Path.cwd() / 'parsed_files' / 'all_h5_files.txt') #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
+        OUT_FOLDER = str(Path.cwd() / 'data_out') + '/'
 
     elif data_type == "train":
         H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
@@ -114,10 +113,13 @@ def run_cluster_normalize(data_type = None,worker_id=0):
         H5_PATH_PREFIX = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/parse_job_out/parsed_files/"
         H5_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/cluster_scripts/validation_files.txt"
         OUT_FOLDER = "/mnt/lustre/groups/cs-dclabs-2019/esport/death_prediction_data/randomized_data/validation/"
-    
-    WORKER_ID = worker_id #int(os.environ['SLURM_ARRAY_TASK_ID'])
-    NUM_WORKERS = os.cpu_count() #int(os.environ['SLURM_ARRAY_TASK_COUNT'])
 
+    WORKER_ID = worker_id #int(os.environ['SLURM_ARRAY_TASK_ID'])
+
+    if num_workers == None:
+        NUM_WORKERS = os.cpu_count() #int(os.environ['SLURM_ARRAY_TASK_COUNT'])
+    else:
+        NUM_WORKERS = 1
 
     now = time.time()
     norm_stats = None
@@ -198,8 +200,8 @@ def load_data_chunk(h5_files,worker_id=None,num_workers=None):
     if worker_id is not None:
         files_per_worker = int(math.ceil(float(len(h5_files)) / num_workers))
         h5_files = h5_files[worker_id*files_per_worker : (worker_id+1)*files_per_worker]
-        
-    #h5_files = h5_files[0:10] # debug only take the first 10
+
+    # h5_files = h5_files[0:10] # debug only take the first 10
 
     # read in all the data, and concatenate it into on big data frame
     data = None

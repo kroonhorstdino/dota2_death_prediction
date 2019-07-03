@@ -360,13 +360,14 @@ def train_pytorch():
 
     example_data = data_loader.load_data_from_file(trainingDataFiles[0])
     hero_feature_indicies = get_feature_indicies_fn(example_data)
-    
+
     if WHO_DIES_NEXT_MODE == True:
         label_indicies = get_label_indicies_fn(example_data)
     else:
-        label_indicies = get_label_indicies_fn(example_data,config["label_set_arg"])
+	#label_indicies = get_label_indicies_fn(example_data,config["label_set_arg"])
+        label_indicies = get_label_indicies_fn(example_data)
 
-    
+
 
     inputFeatureSize = len(hero_feature_indicies[0])
     outputFeatureSize = len(label_indicies)

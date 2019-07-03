@@ -42,9 +42,9 @@ NORM_STATS_FILE = parent_dir / 'norm_stats.pickle'
 
 
 norm_stats = None
-#if ALSO_NORMALIZE == True:
-#	with open(NORM_STATS_FILE, 'rb') as f:
-#		norm_stats = pickle.load(f)
+if ALSO_NORMALIZE == True:
+	with open(NORM_STATS_FILE, 'rb') as f:
+		norm_stats = pickle.load(f)
 
 #FOR SLURM
 """

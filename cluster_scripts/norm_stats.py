@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path.cwd().parent))
+sys.path.append(str(Path.cwd()))
 
 import data_loader
 

@@ -1,6 +1,6 @@
 import pathlib
 
-H5_FILE_LIST = pathlib.Path.cwd() / 'parsed_files' / 'all_h5_files.txt' #"/users/ak1774/scratch/esport/death_prediction/all_h5_files.txt"
+H5_FILE_LIST = str(pathlib.Path.cwd() / 'parsed_files' / 'all_h5_files.txt')
 
 with open(H5_FILE_LIST) as f:
         h5_files = f.readlines()
