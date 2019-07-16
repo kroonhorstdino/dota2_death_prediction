@@ -1,6 +1,6 @@
 import pathlib
 
-H5_FILE_LIST = str(pathlib.Path.cwd() / 'parsed_files' / 'all_h5_files.txt')
+H5_FILE_LIST = str(pathlib.Path.cwd().parent / 'parsed_files' / 'all_h5_files.txt')
 
 with open(H5_FILE_LIST) as f:
         h5_files = f.readlines()
@@ -31,5 +31,3 @@ with open('test_files.txt', 'w') as f:
 with open('validation_files.txt', 'w') as f:
     for item in validation_files:
         f.write("%s\n" % item)
-
-        

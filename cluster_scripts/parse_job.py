@@ -1,5 +1,3 @@
-
-
 import sys
 import os
 import math
@@ -26,14 +24,14 @@ import utility
 # find . -name "*.dem" -type f > all_dem_files.txt
 # then set MATCH_FILE_LOCATION_PREFIX
 
-MATCH_FILE_LOCATION_PREFIX = parent_dir.parent / 'source_demo_replaydownloader' / 'replays'
+MATCH_FILE_LOCATION_PREFIX = parent_dir.parent / 'replays'
 #MATCH_FILE_LOCATION_PREFIX = "/users/ak1774/scratch/cs-dclabs-2019/esport/gamefiles/semipro/"
 #MATCH_FILE_LOCATION_PREFIX = "/users/ak1774/scratch/cs-dclabs-2019/esport/gamefiles/pro/"
 
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_pro_dems.txt"
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/all_semipro_dems.txt"
 #MATCH_FILE_LIST = "/users/ak1774/scratch/esport/death_prediction/some_dem_files.txt"
-MATCH_FILE_LIST = parent_dir.parent / 'source_demo_replaydownloader' / 'replays' / 'all_dem_files.txt' #TODO
+MATCH_FILE_LIST = parent_dir.parent / 'replays' / 'all_dem_files.txt' #TODO
 
 JAR_PATH = parent_dir / 'parser' / 'target' / 'my_processor-0.0.one-jar.jar'
 
@@ -65,8 +63,8 @@ def parse_files(worker_id):
 
 	print("I am worker " + str(WORKER_ID))
 
-	ROOT_DIR = parent_dir
-	RESULTS_DIR = parent_dir / 'parsed_files'
+	#ROOT_DIR = parent_dir
+	RESULTS_DIR = parent_dir.parent / 'parsed_files'
 
 	with open(str(MATCH_FILE_LIST)) as f: #MATCH_FILE_LIST
 		all_match_files = f.readlines()
@@ -105,21 +103,23 @@ def parse_files(worker_id):
 		sys.stdout.flush()
 
 		os.chdir(RESULTS_DIR)
+		try:
+			data = preprocess.read_and_preprocess_data(match_name) #One match
+			if data is not None:
+				if ALSO_NORMALIZE == True:
+					now = time.time()
+					data = data_loader.normalize_data(data,norm_stats)
+					print("Normalizing took: ", time.time()-now)
+					sys.stdout.flush()
 
-		data = preprocess.read_and_preprocess_data(match_name) #One match
-		if data is not None:
-			if ALSO_NORMALIZE == True:
-				now = time.time()
-				data = data_loader.normalize_data(data,norm_stats)
-				print("Normalizing took: ", time.time()-now)
-				sys.stdout.flush()
+				data.to_hdf(match_name + '.h5', key='data', mode='w', complevel = 1,complib='zlib')
+				print("H5 created")
+			else:
+				print("Corrupt match deleted: ",match_name)
+			sys.stdout.flush()
+		except ValueError:
+			print("Error when processing file!")
 
-			data.to_hdf(match_name + '.h5', key='data', mode='w', complevel = 1,complib='zlib')
-			print("H5 created")
-		else:
-			print("Corrupt match deleted: ",match_name)
-		sys.stdout.flush()
-		
 		#CSV_PATH = 'G:/Bachelor/dota2_death_prediction/parsed_files/4844929615_849875286.csv'
 		#CSV_LIFE_PATH = 'G:/Bachelor/dota2_death_prediction/parsed_files/4844929615_849875286_life.csv'
 
@@ -141,9 +141,9 @@ if __name__ == '__main__': #Split into processes here
 
 	workers = [i for i in range(worker_count)]
 	print("Number of Workers: " + str(len(workers)))
-	
+
 	print("Create multiple processes")
 	with Pool(worker_count) as p:
 		p.map(parse_files, workers)  # Work in parallel
-	
+
 	#parse_files(0) #For debugging
